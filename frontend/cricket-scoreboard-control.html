@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Score Control Panel</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .control-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .score-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .control-button {
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .control-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .runs-button { background-color: #4CAF50; color: white; }
+        .wicket-button { background-color: #f44336; color: white; }
+        .extras-button { background-color: #2196F3; color: white; }
+        .action-button { background-color: #9C27B0; color: white; }
+        
+        .section-heading {
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .player-controls {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .player-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .player-row label {
+            width: 120px;
+            font-weight: bold;
+        }
+        
+        .player-row select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .radio-group {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+        
+        .radio-group label {
+            margin-left: 5px;
+            width: auto;
+            font-weight: normal;
+        }
+        
+        .update-button {
+            background-color: #FF9800;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .team-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .team-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .player-list {
+            margin-top: 10px;
+        }
+        
+        .player-input {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        
+        .player-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        
+        .add-player-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        
+        .batsman-role {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <h2>Score Control Panel</h2>
+        
+        <!-- Team Setup Section -->
+        <div class="section-heading">Team Setup</div>
+        <div class="team-controls">
+            <div>
+                <label for="team1Name">Team 1 Name:</label>
+                <input type="text" id="team1Name" class="team-input" placeholder="Enter team 1 name">
+                
+                <div class="player-list" id="team1Players">
+                    <div class="player-input">
+                        <input type="text" placeholder="Player name" class="team1-player">
+                        <button class="add-player-btn" onclick="addPlayerField(1)">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <label for="team2Name">Team 2 Name:</label>
+                <input type="text" id="team2Name" class="team-input" placeholder="Enter team 2 name">
+                
+                <div class="player-list" id="team2Players">
+                    <div class="player-input">
+                        <input type="text" placeholder="Player name" class="team2-player">
+                        <button class="add-player-btn" onclick="addPlayerField(2)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="update-button" onclick="saveTeams()">Save Teams</button>
+        
+        <!-- Bowler Selection Section -->
+        <div class="section-heading">Bowler Selection</div>
+        <div class="player-controls">
+            <div class="player-row">
+                <label for="currentBowler">Current Bowler:</label>
+                <select id="currentBowler">
+                    <option value="">Select Bowler</option>
+                </select>
+            </div>
+            
+            <button class="update-button" onclick="updateBowler()">Update Bowler</button>
+        </div>
+        
+        <!-- Scoring Controls -->
+        <div class="section-heading">Scoring</div>
+        <div class="score-controls">
+            <button class="control-button runs-button" onclick="addRuns(0)">Dot Ball</button>
+            <button class="control-button runs-button" onclick="addRuns(1)">1 Run</button>
+            <button class="control-button runs-button" onclick="addRuns(2)">2 Runs</button>
+            <button class="control-button runs-button" onclick="addRuns(3)">3 Runs</button>
+            <button class="control-button runs-button" onclick="addRuns(4)">4 Runs</button>
+            <button class="control-button runs-button" onclick="addRuns(6)">6 Runs</button>
+            
+            <button class="control-button wicket-button" onclick="wicketDialog()">Wicket</button>
+            <button class="control-button extras-button" onclick="addExtras('wide')">Wide</button>
+            <button class="control-button extras-button" onclick="addExtras('no-ball')">No Ball</button>
+        </div>
+    </div>
+
+    <script>
+
+        const socket = new WebSocket('ws://localhost:8080');
+        
+        function updateScoreboard() {
+            const player1 = document.getElementById('player1').value;
+            const score1 = document.getElementById('score1').value;
+            const player2 = document.getElementById('player2').value;
+            const score2 = document.getElementById('score2').value;
+            
+            const data = { player1, score1, player2, score2 };
+            socket.send(JSON.stringify(data));
+        }
+
+        // Store players data
+        let teams = {
+            team1: {
+                name: '',
+                players: []
+            },
+            team2: {
+                name: '',
+                players: []
+            }
+        };
+        
+        // Get batting team players (initially empty)
+        let battingTeamPlayers = [];
+        let bowlingTeamPlayers = [];
+        
+        // Add more player input fields
+        function addPlayerField(teamNum) {
+            const playersList = document.getElementById(`team${teamNum}Players`);
+            const newPlayerInput = document.createElement('div');
+            newPlayerInput.className = 'player-input';
+            newPlayerInput.innerHTML = `
+                <input type="text" placeholder="Player name" class="team${teamNum}-player">
+                <button class="add-player-btn" onclick="addPlayerField(${teamNum})">+</button>
+            `;
+            playersList.appendChild(newPlayerInput);
+        }
+        
+        // Save teams and players data
+        function saveTeams() {
+            // Get team names
+            teams.team1.name = document.getElementById('team1Name').value || 'Team 1';
+            teams.team2.name = document.getElementById('team2Name').value || 'Team 2';
+            
+            // Get team 1 players
+            teams.team1.players = [];
+            const team1Inputs = document.querySelectorAll('.team1-player');
+            team1Inputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    teams.team1.players.push(input.value.trim());
+                }
+            });
+            
+            // Get team 2 players
+            teams.team2.players = [];
+            const team2Inputs = document.querySelectorAll('.team2-player');
+            team2Inputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    teams.team2.players.push(input.value.trim());
+                }
+            });
+            
+            // Assume team1 is batting first (you could add a toss functionality)
+            battingTeamPlayers = teams.team1.players;
+            bowlingTeamPlayers = teams.team2.players;
+            
+            // Update dropdown menus
+            updatePlayerDropdowns();
+            
+            alert('Teams saved successfully!');
+            
+            // Send team info to scoreboard
+            window.opener.postMessage({
+                type: 'teamUpdate',
+                team1Name: teams.team1.name,
+                team2Name: teams.team2.name
+            }, '*');
+        }
+        
+        // Update player dropdown menus with saved players
+        function updatePlayerDropdowns() {
+            // Update batsmen dropdowns
+            const batsman1Select = document.getElementById('batsman1');
+            const batsman2Select = document.getElementById('batsman2');
+            
+            // Clear existing options
+            batsman1Select.innerHTML = '<option value="">Select Batsman</option>';
+            batsman2Select.innerHTML = '<option value="">Select Batsman</option>';
+            
+            // Add batting team players
+            battingTeamPlayers.forEach(player => {
+                batsman1Select.innerHTML += `<option value="${player}">${player}</option>`;
+                batsman2Select.innerHTML += `<option value="${player}">${player}</option>`;
+            });
+            
+            // Update bowler dropdown
+            const bowlerSelect = document.getElementById('currentBowler');
+            bowlerSelect.innerHTML = '<option value="">Select Bowler</option>';
+            
+            // Add bowling team players
+            bowlingTeamPlayers.forEach(player => {
+                bowlerSelect.innerHTML += `<option value="${player}">${player}</option>`;
+            });
+        }
+        
+        // Update batsmen information
+        function updateBatsmen() {
+            const batsman1 = document.getElementById('batsman1').value;
+            const batsman2 = document.getElementById('batsman2').value;
+            const striker = document.querySelector('input[name="striker"]:checked').value;
+            
+            if (!batsman1 || !batsman2) {
+                alert('Please select both batsmen');
+                return;
+            }
+            
+            if (batsman1 === batsman2) {
+                alert('Please select different players for Batsman 1 and Batsman 2');
+                return;
+            }
+            
+            // Send batsmen info to scoreboard
+            window.opener.postMessage({
+                type: 'batsmenUpdate',
+                batsman1: batsman1,
+                batsman2: batsman2,
+                striker: striker.includes('batsman1') ? batsman1 : batsman2
+            }, '*');
+            
+            alert('Batsmen updated successfully!');
+        }
+        
+        // Update bowler information
+        function updateBowler() {
+            const bowler = document.getElementById('currentBowler').value;
+            
+            if (!bowler) {
+                alert('Please select a bowler');
+                return;
+            }
+            
+            // Send bowler info to scoreboard
+            window.opener.postMessage({
+                type: 'bowlerUpdate',
+                bowler: bowler
+            }, '*');
+            
+            alert('Bowler updated successfully!');
+        }
+        
+        // Wicket dialog (simplified - you could replace with a modal)
+        function wicketDialog() {
+            const wicketType = prompt('Wicket type (bowled/caught/run out/etc):');
+            
+            if (wicketType) {
+                addWicket(wicketType);
+            }
+        }
+        
+        // Scoring functions
+        function addRuns(runs) {
+            console.log(`Added ${runs} runs`);
+            
+            // Check if runs is 4 or 6 to trigger animations
+            let eventType = 'runs';
+            if (runs === 4) eventType = 'four';
+            else if (runs === 6) eventType = 'six';
+            
+            // Send to scoreboard
+            window.opener.postMessage({
+                type: eventType,
+                value: runs
+            }, '*');
+            
+            // Switch striker if odd runs
+            if (runs % 2 === 1) {
+                switchStriker();
+            }
+        }
+
+        function addWicket(wicketType) {
+            console.log('Wicket added: ' + wicketType);
+            
+            window.opener.postMessage({
+                type: 'wicket',
+                dismissalType: wicketType
+            }, '*');
+            
+            // Then prompt for new batsman (simplified)
+            const newBatsman = prompt('Select new batsman:');
+            if (newBatsman) {
+                // Replace the out batsman
+                const striker = document.querySelector('input[name="striker"]:checked').value;
+                if (striker.includes('batsman1')) {
+                    document.getElementById('batsman1').value = newBatsman;
+                } else {
+                    document.getElementById('batsman2').value = newBatsman;
+                }
+                
+                // Update the batsmen
+                updateBatsmen();
+            }
+        }
+
+        function addExtras(type) {
+            console.log(`Added ${type}`);
+            
+            window.opener.postMessage({
+                type: 'extras',
+                value: type
+            }, '*');
+            
+            // No need to switch striker for wides and no-balls
+        }
+        
+        // Switch striker
+        function switchStriker() {
+            const currentStriker = document.querySelector('input[name="striker"]:checked').value;
+            if (currentStriker.includes('batsman1')) {
+                document.getElementById('striker2').checked = true;
+            } else {
+                document.getElementById('striker1').checked = true;
+            }
+        }
+    </script>
+</body>
+</html>

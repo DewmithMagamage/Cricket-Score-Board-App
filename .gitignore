@@ -1,0 +1,9 @@
+# .gitignore
+.qodo
+node_modules/       # Ignore all node_modules folders
+.DS_Store           # Ignore Mac system files
+.env                # Ignore environment variables
+*.log               # Ignore log files
+dist/               # Ignore build folders (if any)
+.idea/              # Ignore IDE files
+.vscode/            # Ignore editor settings

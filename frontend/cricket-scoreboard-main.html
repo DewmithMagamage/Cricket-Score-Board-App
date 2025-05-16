@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Cricket Scoreboard Manager</title>
+    <style>
+/* General Styles */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1E3C72 0%, #2A5298 100%);
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    width: 90%;
+    padding: 20px;
+}
+
+/* Header */
+.app-header {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #1E3C72;
+}
+
+/* Tabs Navigation */
+.tabs {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+    background-color: #f7f7f7;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.tab:hover {
+    background-color: #e3e3e3;
+}
+
+.tab.active {
+    background-color: #007bff;
+    color: white;
+    box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Page Content */
+.page {
+    display: none;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.page.active {
+    display: block;
+}
+
+/* Team Section */
+.team-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.team-details {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: transform 0.3s ease;
+}
+
+.team-details:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Input Fields */
+input,
+select {
+    width: 95%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+input:focus,
+select:focus {
+    border: 1px solid #007bff;
+}
+
+/* Player List */
+.player-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.player-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    margin-top: 10px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+.score-controls h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.score-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.control-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.runs-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.wicket-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.extras-button {
+    background-color: #ffc107;
+    color: black;
+}
+
+.rotate-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.over-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.undo-button {
+    background-color: #ff5722;
+    color: white;
+}
+
+.control-button:hover {
+    opacity: 0.85;
+}
+
+.output-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.open-output {
+    background-color: #28a745;
+}
+
+/* Logo Preview */
+.logo-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    display: block;
+    margin: 10px auto;
+}
+
+/* Player Selection Section */
+.player-selection {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.player-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.player-row label {
+    width: 100px;
+    font-weight: bold;
+}
+
+.player-row select {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.striker-radio {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.striker-radio input {
+    margin-right: 5px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-header">
+            <h1>Cricket Scoreboard Manager</h1>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showPage('teamDetailsPage')">Team Details</div>
+            <div class="tab" onclick="showPage('scoreControlPage')">Score Control</div>
+            <div class="tab" onclick="showPage('Output Manager')">Output Manager</div>
+            <div class="tab" onclick="openOutputPage()">Output Page</div>
+        </div>
+
+        <!-- Team and Match Details Page -->
+        <div id="teamDetailsPage" class="page active">
+            <h2>Match & Team Details</h2>
+
+            <!-- Match Details Section -->
+            <div class="match-section">
+                <h3>Match Details</h3>
+                <input type="text" id="matchName" placeholder="Match Name" class="form-control">
+                <input type="text" id="matchVenue" placeholder="Venue" class="form-control">
+                <select id="matchType" class="form-control">
+                    <option value="" disabled selected>Select Match Type</option>
+                    <option value="T20">T20</option>
+                    <option value="One Day">One Day</option>
+                    <option value="Test Match">Test Match</option>
+                </select>
+            </div>
+
+            <!-- Team Details Section -->
+            <div class="team-section">
+                <div class="team-details">
+                    <h3>Team 1 Details</h3>
+                    <input type="text" id="team1Name" placeholder="Team Name" class="form-control">
+            
+                    <label for="team1Logo" class="upload-label">Upload Logo</label>
+                    <input type="file" id="team1Logo" accept="image/*" class="form-control">
+                    <img id="team1LogoPreview" class="logo-preview" src="" alt="Team 1 Logo" style="display: none;">
+
+                    <div class="player-list" id="team1PlayerList">
+                        <h4>Players</h4>
+                        <div class="player-input">
+                            <input type="text" id="team1PlayerInput" placeholder="Player Name">
+                            <button class="btn btn-primary" onclick="addPlayer('team1')">+</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-details">
+                    <h3>Team 2 Details</h3>
+                    <input type="text" id="team2Name" placeholder="Team Name" class="form-control">
+    
+                    <label for="team2Logo" class="upload-label">Upload Logo</label>
+                    <input type="file" id="team2Logo" accept="image/*" class="form-control">
+                    <img id="team2LogoPreview" class="logo-preview" src="" alt="Team 2 Logo" style="display: none;">
+                    
+                    <div class="player-list" id="team2PlayerList">
+                        <h4>Players</h4>
+                        <div class="player-input">
+                            <input type="text" id="team2PlayerInput" placeholder="Player Name">
+                            <button class="btn btn-primary" onclick="addPlayer('team2')">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveTeamDetails()">Save Team Details</button>
+        </div>
+
+        <!-- Advanced Score Control Page -->
+        <div id="scoreControlPage" class="page">
+            <h2>Score Control Panel</h2>
+
+            <!-- Player Selection Section -->
+            <div class="player-selection">
+                <div class="player-row">
+                    <label for="batsman1">Batsman 1:</label>
+                    <select id="batsman1" class="form-control" onchange="updatePlayersInRealTime()">
+                        <option value="">Select Batsman</option>
+                    </select>
+                    <div class="striker-radio">
+                        <input type="radio" id="striker1" name="striker" value="batsman1" checked onchange="updatePlayersInRealTime()">
+                        <label for="striker1">On Strike</label>
+                    </div>
+                </div>
+                
+                <div class="player-row">
+                    <label for="batsman2">Batsman 2:</label>
+                    <select id="batsman2" class="form-control" onchange="updatePlayersInRealTime()">
+                        <option value="">Select Batsman</option>
+                    </select>
+                    <div class="striker-radio">
+                        <input type="radio" id="striker2" name="striker" value="batsman2" onchange="updatePlayersInRealTime()">
+                        <label for="striker2">On Strike</label>
+                    </div>
+                </div>
+                
+                <div class="player-row">
+                    <label for="bowler">Bowler:</label>
+                    <select id="bowler" class="form-control" onchange="updatePlayersInRealTime()">
+                        <option value="">Select Bowler</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Score Control Buttons -->
+            <div class="score-controls">
+                <h3>Runs</h3>
+                <div class="runs-section">
+                    <button class="control-button runs-button" onclick="addRuns(0)">Dot Ball</button>
+                    <button class="control-button runs-button" onclick="addRuns(1)">1 Run</button>
+                    <button class="control-button runs-button" onclick="addRuns(2)">2 Runs</button>
+                    <button class="control-button runs-button" onclick="addRuns(3)">3 Runs</button>
+                    <button class="control-button runs-button" onclick="addRuns(4)">4 Runs</button>
+                    <button class="control-button runs-button" onclick="addRuns(6)">6 Runs</button>
+                </div>
+
+                <h3>Wickets & Extras</h3>
+                <div class="wickets-extras-section">
+                    <button class="control-button wicket-button" onclick="addWicket()">Wicket</button>
+                    <button class="control-button extras-button" onclick="addExtras('wide')">Wide</button>
+                    <button class="control-button extras-button" onclick="addExtras('no-ball')">No Ball</button>
+                    <button class="control-button extras-button" onclick="addExtras('bye')">Bye</button>
+                    <button class="control-button extras-button" onclick="addExtras('leg-bye')">Leg Bye</button>
+                </div>
+            </div>
+
+            <!-- Other Controls -->
+            <div class="other-controls">
+                <button class="control-button rotate-button" onclick="rotateStrike()">Rotate Strike</button>
+                <button class="control-button over-button" onclick="completeOver()">Complete Over</button>
+                <button class="control-button undo-button" onclick="undoLastAction()">Undo</button>
+            </div>
+        </div>
+
+        <!-- Output Manager Page -->
+        <div id="Output Manager" class="page">
+            <h2>Output Manager</h2>
+    
+            <div class="output-controls">
+                <button class="control-button" onclick="playVideo('four')">4 Runs</button>
+                <button class="control-button" onclick="playVideo('six')">6 Runs</button>
+                <button class="control-button" onclick="playVideo('not-out')">Not Out</button>
+                <button class="control-button" onclick="playVideo('out')">Out</button>
+                <button class="control-button" onclick="playVideo('team1')">Team 1 Details</button>
+                <button class="control-button" onclick="playVideo('team2')">Team 2 Details</button>
+                <button class="control-button open-output" onclick="openOutputPage()">Open Output Page</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store teams data
+        let teams = {
+            team1: { name: '', players: [], logo: '' },
+            team2: { name: '', players: [], logo: '' }
+        };
+        
+        let socket = new WebSocket('ws://localhost:8080');
+        let battingTeam = 'team1';
+        let bowlingTeam = 'team2';
+        let outputWindow = null;
+
+        function showPage(pageId) {
+            ['teamDetailsPage', 'scoreControlPage', 'Output Manager'].forEach(page => {
+                document.getElementById(page).classList.remove('active');
+                document.querySelector(`.tab[onclick="showPage('${page}')"]`).classList.remove('active');
+            });
+
+            document.getElementById(pageId).classList.add('active');
+            document.querySelector(`.tab[onclick="showPage('${pageId}')"]`).classList.add('active');
+        }
+
+        function openOutputPage() {
+            if (!outputWindow || outputWindow.closed) {
+                outputWindow = window.open('output-page.html', 'Output Page', 'width=1200,height=800');
+            } else {
+                outputWindow.focus();
+            }
+        }
+
+        function addPlayer(teamId) {
+            const playerList = document.getElementById(`${teamId}PlayerList`);
+            const newPlayerInput = document.createElement('div');
+            newPlayerInput.classList.add('player-input');
+            
+            newPlayerInput.innerHTML = `
+                <input type="text" placeholder="Player Name">
+                <button class="btn btn-primary" onclick="addPlayer('${teamId}')">+</button>
+                <button class="btn btn-danger" onclick="removePlayer(this)">-</button>
+            `;
+            
+            playerList.appendChild(newPlayerInput);
+        }
+
+        function removePlayer(button) {
+            button.closest('.player-input').remove();
+        }
+
+        function saveTeamDetails() {
+            // Save team names
+            teams.team1.name = document.getElementById('team1Name').value || 'Team 1';
+            teams.team2.name = document.getElementById('team2Name').value || 'Team 2';
+            
+            // Handle team logos
+            const team1LogoInput = document.getElementById('team1Logo');
+            const team2LogoInput = document.getElementById('team2Logo');
+            
+            const logoPromises = [];
+            
+            if (team1LogoInput.files && team1LogoInput.files[0]) {
+                logoPromises.push(new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        teams.team1.logo = e.target.result;
+                        document.getElementById('team1LogoPreview').src = teams.team1.logo;
+                        document.getElementById('team1LogoPreview').style.display = 'block';
+                        resolve();
+                    };
+                    reader.readAsDataURL(team1LogoInput.files[0]);
+                }));
+            } else {
+                teams.team1.logo = '';
+                logoPromises.push(Promise.resolve());
+            }
+            
+            if (team2LogoInput.files && team2LogoInput.files[0]) {
+                logoPromises.push(new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        teams.team2.logo = e.target.result;
+                        document.getElementById('team2LogoPreview').src = teams.team2.logo;
+                        document.getElementById('team2LogoPreview').style.display = 'block';
+                        resolve();
+                    };
+                    reader.readAsDataURL(team2LogoInput.files[0]);
+                }));
+            } else {
+                teams.team2.logo = '';
+                logoPromises.push(Promise.resolve());
+            }
+
+            Promise.all(logoPromises).then(() => {
+                // Save match details
+                const matchName = document.getElementById('matchName').value || 'Cricket Match';
+                const matchVenue = document.getElementById('matchVenue').value || 'Unknown Venue';
+                const matchType = document.getElementById('matchType').value || 'T20';
+                
+                // Save team 1 players
+                teams.team1.players = [];
+                const team1Inputs = document.querySelectorAll('#team1PlayerList input[type="text"]');
+                team1Inputs.forEach(input => {
+                    if (input.value.trim() !== '') {
+                        teams.team1.players.push(input.value.trim());
+                    }
+                });
+                
+                // Save team 2 players
+                teams.team2.players = [];
+                const team2Inputs = document.querySelectorAll('#team2PlayerList input[type="text"]');
+                team2Inputs.forEach(input => {
+                    if (input.value.trim() !== '') {
+                        teams.team2.players.push(input.value.trim());
+                    }
+                });
+                
+                // Update player dropdowns
+                updatePlayerDropdowns();
+                
+                // Send team details via WebSocket
+                sendMessage({
+                    type: 'updateTeams',
+                    battingTeam: { 
+                        name: teams[battingTeam].name, 
+                        logo: teams[battingTeam].logo 
+                    },
+                    bowlingTeam: { 
+                        name: teams[bowlingTeam].name, 
+                        logo: teams[bowlingTeam].logo 
+                    },
+                    matchName: matchName,
+                    matchVenue: matchVenue,
+                    matchType: matchType
+                });
+                
+                alert('Team details saved successfully!');
+            });
+        }
+
+        function updatePlayerDropdowns() {
+            const batsman1Select = document.getElementById('batsman1');
+            const batsman2Select = document.getElementById('batsman2');
+            
+            batsman1Select.innerHTML = '<option value="">Select Batsman</option>';
+            batsman2Select.innerHTML = '<option value="">Select Batsman</option>';
+            
+            teams[battingTeam].players.forEach(player => {
+                batsman1Select.innerHTML += `<option value="${player}">${player}</option>`;
+                batsman2Select.innerHTML += `<option value="${player}">${player}</option>`;
+            });
+            
+            const bowlerSelect = document.getElementById('bowler');
+            bowlerSelect.innerHTML = '<option value="">Select Bowler</option>';
+            
+            teams[bowlingTeam].players.forEach(player => {
+                bowlerSelect.innerHTML += `<option value="${player}">${player}</option>`;
+            });
+        }
+
+        function updatePlayersInRealTime() {
+            const batsman1 = document.getElementById('batsman1').value;
+            const batsman2 = document.getElementById('batsman2').value;
+            const bowler = document.getElementById('bowler').value;
+            const striker = document.querySelector('input[name="striker"]:checked').value;
+            
+            if (!batsman1 || !batsman2 || !bowler) return;
+            if (batsman1 === batsman2) {
+                alert('Please select different players for Batsman 1 and Batsman 2');
+                return;
+            }
+            
+            sendMessage({
+                type: 'updatePlayers',
+                batsman1: batsman1,
+                batsman2: batsman2,
+                bowler: bowler,
+                striker: striker === 'batsman1' ? batsman1 : batsman2
+            });
+        }
+
+        function sendMessage(message) {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify(message));
+            } else {
+                console.error('WebSocket is not open');
+            }
+        }
+
+        function addRuns(runs) {
+            sendMessage({ type: 'runs', value: runs });
+            if (runs % 2 === 1) rotateStrike();
+        }
+
+        function addWicket() {
+            sendMessage({ type: 'wicket' });
+        }
+
+        function addExtras(type) {
+            sendMessage({ type: 'extras', value: type });
+        }
+
+        function rotateStrike() {
+            const currentStriker = document.querySelector('input[name="striker"]:checked').value;
+            if (currentStriker === 'batsman1') {
+                document.getElementById('striker2').checked = true;
+            } else {
+                document.getElementById('striker1').checked = true;
+            }
+            updatePlayersInRealTime();
+        }
+
+        function completeOver() {
+            sendMessage({ type: 'over' });
+        }
+
+        function undoLastAction() {
+            sendMessage({ type: 'undo' });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePlayerDropdowns();
+            
+            socket.onopen = function() {
+                console.log('Connected to WebSocket server');
+            };
+            
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        });
+    </script>
+</body>
+</html>
